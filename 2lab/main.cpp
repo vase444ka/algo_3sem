@@ -4,7 +4,7 @@
 
 using namespace std;
 
-const int SIZE = 10;
+const int SIZE = 1000;
 
 template <typename T>
 void solution(vector <T> &screw, vector <T> &nut, int from, int to){
@@ -37,24 +37,37 @@ void solution(vector <T> &screw, vector <T> &nut, int from, int to){
     solution(screw, nut, l + 1, to);
 }
 
+void generate_rand(vector <int> &vec,  int N){
+    int used[N];
+
+    for (int i = 0; i <N; i++)
+        used[i] = 0;
+
+    for (int i = 0; i < N; i++){
+        int tmp = rand()%N;
+        while(used[tmp])
+            tmp = rand()%N;
+        vec.push_back(tmp);
+        used[tmp] = 1;
+    }
+
+}
 
 int main() {
     srand(time(0));
     vector <int> nut;
     vector <int> screw;
 
-    for (int i = 0; i < SIZE; i++){
-        nut.push_back(9 - i);
-        screw.push_back((5 + i)%10);
-    }
+    generate_rand(nut, SIZE);
+    generate_rand(screw, SIZE);
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < SIZE; i++)
         cout<<nut[i]<<" - "<<screw[i]<<endl;
     cout<<endl;
 
-    solution(screw, nut, 0, 9);
+    solution(screw, nut, 0, SIZE - 1);
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < SIZE; i++)
         cout<<nut[i]<<" - "<<screw[i]<<endl;
 
 

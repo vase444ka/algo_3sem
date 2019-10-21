@@ -9,7 +9,7 @@
 //rewrite sorted chunks into newly created files
 //merging
 
-const int RAM_SIZE = 4;
+const int RAM_SIZE = 10000;
 
 int neutral(){
     return -1;
@@ -119,8 +119,6 @@ template <typename T>//n chunks in shrt, k in lng, 0 in dest, n <= k
 void merge(std::fstream &destin, std::fstream &shrt, std::fstream &lng){
     while(!shrt.eof() && !lng.eof()){
         T shrt_inp, lng_inp;
-        //shrt>>shrt_inp;
-        //lng>>lng_inp;
         shrt.read((char *) &shrt_inp, sizeof(T));
         if (shrt.eof())
             break;
@@ -128,35 +126,25 @@ void merge(std::fstream &destin, std::fstream &shrt, std::fstream &lng){
 
         while(!shrt.eof() && !lng.eof() && shrt_inp != neutral() && lng_inp != neutral()){
             if (shrt_inp < lng_inp){
-                //destin<<' '<<shrt_inp;
-                //shrt>>shrt_inp;
                 destin.write(reinterpret_cast <char*> (&shrt_inp), sizeof(T));
                 shrt.read((char*)&shrt_inp, sizeof(T));
             }
             else{
-                //destin<<' '<<lng_inp;
-                //lng>>lng_inp;
                 destin.write(reinterpret_cast <char*> (&lng_inp), sizeof(T));
                 lng.read((char*)&lng_inp, sizeof(T));
             }
         }
         while(!shrt.eof() && shrt_inp != neutral()){
-            //destin<<' '<<shrt_inp;
-            //shrt>>shrt_inp;
             destin.write(reinterpret_cast <char*> (&shrt_inp), sizeof(T));
             shrt.read((char*)&shrt_inp, sizeof(T));
         }
         while(!lng.eof() && lng_inp != neutral()){
-            //destin<<' '<<lng_inp;
-            //lng>>lng_inp;
             destin.write(reinterpret_cast <char*> (&lng_inp), sizeof(T));
             lng.read((char*)&lng_inp, sizeof(T));
         }
 
-        //destin<<' '<<neutral();
         T neutr = neutral();
         destin.write(reinterpret_cast<char*> (&neutr), sizeof(T));
-
     }
 }
 
@@ -166,7 +154,7 @@ void multiphase_sort(std::fstream &data){
     int data_N, *distrib, chunks_N, cur_chunk = 1;
     std::fstream used_files[FILES_N];
 
-    data>>data_N;
+    data.read((char*)&data_N, sizeof(T));
     distrib = create_distribution(data_N, FILES_N, chunks_N);
     int chunk_size = data_N/chunks_N;
 
@@ -178,18 +166,15 @@ void multiphase_sort(std::fstream &data){
             std::vector <T> tmp;
             T input;
             for (int k = 0; k < chunk_size + is_bigger(cur_chunk, chunks_N, data_N); k++){
-                data>>input;
+                data.read((char*)&input, sizeof(T));
                 tmp.push_back(input);
             }
 
             heap_sort(tmp, 0, tmp.size() - 1);
 
-            for (auto &&it: tmp){
-                //used_files[i]<<' '<<it;
+            for (auto &&it: tmp)
                 used_files[i].write((char*)&it, sizeof(T));
-            }
 
-            //used_files[i]<<' '<<neutral();
             int neutr = neutral();
             used_files[i].write((char*)&neutr, sizeof(T));
 
@@ -208,9 +193,9 @@ void multiphase_sort(std::fstream &data){
         else
             destin = i;
 
-    /*for (auto &&it: cur_file)
-            std::cout<<it.first<<' '<<it.second<<std::endl;
-    std::cout<<std::endl;*/
+    //for (auto &&it: cur_file)
+            //std::cout<<it.first<<' '<<it.second<<std::endl;
+    //std::cout<<std::endl;
 
     while(cur_file.size() > 1){
         int lng = cur_file.begin()->second;
@@ -232,48 +217,41 @@ void multiphase_sort(std::fstream &data){
         used_files[destin].seekg(0);
         destin = shrt;
 
-        /*for (auto &&it: cur_file)
-            std::cout<<it.first<<' '<<it.second<<std::endl;
-        std::cout<<std::endl;*/
+        //for (auto &&it: cur_file)
+           //std::cout<<it.first<<' '<<it.second<<std::endl;
+        //std::cout<<std::endl;
 
         used_files[shrt].close();
         used_files[shrt].open(std::to_string(shrt)+".bin", std::ios::in | std::ios::out | std::ios::trunc | std::ios::binary);
     }
 
-    data.seekp(0);
-    data.seekg(0);
-    data<<data_N<<'\n';
-    if (cur_file.size() == 1){
-        int res = cur_file.begin()->second;
-        T tmp;
-        used_files[res].seekg(0);
-        //used_files[res]>>tmp;
-        used_files[res].read((char*)&tmp, sizeof(T));
-        while(!used_files[res].eof() && tmp != neutral()){
-            data<<tmp<<' ';
-            //used_files[res]>>tmp;
-            used_files[res].read((char*)&tmp, sizeof(T));
+    int res = cur_file.begin()->second;
+    for (int i = 0; i < FILES_N; i++)
+        if (i != res){
+            used_files[i].close();
+            std::remove((std::to_string(i) + ".bin").c_str());
         }
-    }
-
-    for (int i = 0; i < FILES_N; i++){
-        used_files[i].close();
-        std::remove((std::to_string(i) + ".bin").c_str());
-    }
 }
 
 void generate_random(std::fstream &in){
-    const int N = 1000;
-    in<<N<<std::endl;
-    for (int i = 0; i < N; i++)
-        in<<rand()<<' ';
+    const int N = 1000000;
+    in.write((char*)&N, sizeof(int));
+    for (int i = 0; i < N; i++){
+        int rnd = rand();
+        in.write((char*)&rnd, sizeof(int));
+    }
+    in.seekg(0);
+    in.seekp(0);
 }
 
 int main()
 {
     srand(time(0));
-    std::fstream in("input.txt");
+    std::fstream in("input.bin", std::ios::in | std::ios::out | std::ios::trunc | std::ios::binary);
     generate_random(in);
+    return 0;
     multiphase_sort <int> (in);
     return 0;
 }
+
+//time

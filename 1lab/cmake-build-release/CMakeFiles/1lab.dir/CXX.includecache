@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/vbory/Downloads/Proga/algo_3sem/1lab/main.cpp
+iostream
+-
+vector
+-
+cmath
+-
+algorithm
+-
+string
+-
+bits/stdc++.h
+-
+
