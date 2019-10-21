@@ -1,14 +1,20 @@
 template <typename T>
 void counting_sort(std::vector <my_class <T> > &data){
-    std::vector <int> ones_ind;
-    std::vector <int> zeros_ind;
+    std::vector <my_class<T> > ones;
+    std::vector <my_class<T> > zeros;
 
     for (int i = 0; i < data.size(); i++)
         if (data[i].key)
-            ones_ind.push_back(i);
+            ones.push_back(data[i]);
         else
-            zeros_ind.push_back(i);
+            zeros.push_back(data[i]);
 
+    int z = zeros.size();
+
+    for (int i = 0; i < z; i++)
+        data[i] = zeros[i];
+    for (int i = z; i < z + ones.size(); i++)
+        data[i] = ones[i - z];
 }
 
 template <typename T>
@@ -17,8 +23,10 @@ void bubble_sort(std::vector <my_class <T> > &data){
         bool flag = false;
 
         for (int j = 0; j < i; j++)
-            if (data[j].key > data[j + 1].key)
+            if (data[j].key > data[j + 1].key){
                 std::swap(data[j], data[j + 1]);
+                flag = true;
+            }
 
         if (!flag) break;
     }
