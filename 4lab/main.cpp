@@ -1,35 +1,26 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
-#include <time.h>
+#include <ctime>
 #include "headers/my_class.h"
 #include "headers/sorts.h"
 
-const int N = 10;
-
-void randomize(std::vector <my_class <int> > &data){
-    for (int i = 0; i < N; i++){
-        my_class <int> tmp;
-        tmp.key = rand()%2;
-        tmp.data = rand();
-        data.push_back(tmp);
-    }
-
-}
-
 int main() {
-    srand(time(0));
     std::vector <my_class <int> > data;
-    randomize(data);
 
-    std::cout<<"My vector:\n";
-    for (auto &&it: data)
-        std::cout<<it<<std::endl;
+    std::ifstream in("../../4lab_randomizer/cmake-build-debug/input.txt");
 
-    //TODO time here
+    my_class <int> input;
+    while(in>>input){
+        std::cout<<input<<std::endl;
+        data.push_back(input);
+    }
 
     int sort_type;
     std::cout<<"Enter:\n1 - bubble sort\n2 - count sort\n3 - swap sort\n";
     std::cin>>sort_type;
+
+    //int tacts = clock();
 
     if (sort_type == 1)
         bubble_sort(data);
@@ -37,6 +28,10 @@ int main() {
         counting_sort(data);
     if (sort_type == 3)
         swap_sort(data);
+
+    int tacts = clock(); //- tacts;
+
+    std::cout<<"Time needed for algorithm: "<< (float(tacts)) / CLOCKS_PER_SEC <<" s.\n";
 
     std::cout<<"Sorted vector:\n";
     for (auto &&it: data)

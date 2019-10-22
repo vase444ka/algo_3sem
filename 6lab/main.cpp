@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <ctime>
 
 std::vector <int> z_func(std::string s){
     int n = s.size(), l = 0, r = 0;
@@ -33,13 +34,18 @@ bool is_word_in_text(std::string text, const std::string &word){
 }
 
 int main() {
+    freopen("../../6lab_randomizer/cmake-build-debug/input.txt", "r", stdin);
     std::string word, text;
     std::cin>>text>>word;
+    int tacts = clock();
     if (word.size() != text.size()){
         std::cout<<"NO\n";
         return 0;
     }
-    if (is_word_in_text(text, word))
+    bool ans = is_word_in_text(text, word);
+    tacts = clock(); //- tacts;
+    std::cout<<"Time needed for algorithm: "<< (float(tacts)) / CLOCKS_PER_SEC <<" s.\n";
+    if (ans)
         std::cout<<"YES\n";
     else
         std::cout<<"NO\n";

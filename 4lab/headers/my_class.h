@@ -13,11 +13,11 @@ public:
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, my_class <T> outp){
-    out<<"key: "<<outp.key<<'\n'<<outp.data;
+    out<<outp.key<<'\n'<<outp.data;
 }
 
 template <typename T>
-std::istream& operator>>(std::istream& in, my_class <T> inp){
+std::istream& operator>>(std::istream& in, my_class <T> &inp){
     in>>inp.key>>inp.data;
 }
 
