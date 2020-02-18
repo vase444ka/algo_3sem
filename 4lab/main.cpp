@@ -12,7 +12,7 @@ int main() {
 
     my_class <int> input;
     while(in>>input){
-        std::cout<<input<<std::endl;
+        //std::cout<<input<<std::endl;
         data.push_back(input);
     }
 

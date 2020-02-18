@@ -2,7 +2,7 @@
 #include <time.h>
 #include <string>
 
-const int WORDLEN = 100;
+const int WORDLEN = 20;
 
 void gen_correct(std::string &text, std::string &word){
     char tmp_word[WORDLEN];
