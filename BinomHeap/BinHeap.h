@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <list>
 
 template <typename T>
 class Node{
@@ -123,7 +124,42 @@ T BinHeap<T>::min() {
 template<typename T>
 void BinHeap<T>::merge(BinHeap<T> &that){
     _size += that.getSize();
-
+    std::list<std::shared_ptr<Node<T>>> tmp_container;
+    unsigned int first_item = 0, second_item = 0;
+    while(first_item < _roots.size() && second_item < that._roots.size()){
+        if (_roots[first_item]->getHeight() < that._roots[second_item]->getHeight()){
+            tmp_container.push_back(_roots[first_item]);
+            first_item++;
+        }
+        else{
+            tmp_container.push_back(that._roots[second_item]);
+            second_item++;
+        }
+    }
+    while(first_item < _roots.size()){
+        tmp_container.push_back(_roots[first_item]);
+        first_item++;
+    }
+    while(second_item < that._roots.size()){
+        tmp_container.push_back(that._roots[second_item]);
+        second_item++;
+    }
+    for (auto it = tmp_container.begin(), it_next = ++tmp_container.begin(); it_next != tmp_container.end(); ) {
+        if ((*it)->getHeight() == (*it_next)->getHeight()) {
+            if ((*it_next)->getData() > (*it)->getData){
+                std::swap(*it_next, *it);
+            }
+            (*it_next)->merge(*it);
+            it = tmp_container.erase(it);
+        } else {
+            ++it;
+        }
+        ++it_next;
+    }
+    _roots.clear();
+    for (auto it: tmp_container){
+        _roots.push_back(*it);
+    }
 }
 
 template<typename T>
