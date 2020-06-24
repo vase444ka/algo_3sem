@@ -18,7 +18,7 @@ public:
 
     [[nodiscard]] T getData() const;
     [[nodiscard]] std::shared_ptr<Node<T>> getParent() const;
-    void setParent(const std::shared_ptr<Node<T>> &parent);
+    void setParent(Node<T>* parent);
     [[nodiscard]] std::vector <std::shared_ptr<Node<T>>> getKids() const;
     [[nodiscard]] unsigned int getHeight() const;
     //this and that of equal height
@@ -29,14 +29,14 @@ private:
     T _data;
     unsigned int _height;
     std::vector <std::shared_ptr<Node <T>>> _kids;
-    std::shared_ptr<Node <T>> _parent;
+    Node <T>* _parent;
 };
 
 template<typename T>
-Node<T>::Node(): _height(0) {}
+Node<T>::Node(): _height(0), _parent(nullptr) {}
 
 template<typename T>
-Node<T>::Node(T data):_data(data), _height(0) {}
+Node<T>::Node(T data):_data(data), _height(0), _parent(nullptr) {}
 
 template<typename T>
 T Node<T>::getData() const {
@@ -49,7 +49,7 @@ std::shared_ptr<Node<T>> Node<T>::getParent() const {
 }
 
 template<typename T>
-void Node<T>::setParent(const std::shared_ptr<Node<T>> &parent) {
+void Node<T>::setParent(Node<T>* parent) {
     _parent = parent;
 }
 
@@ -65,9 +65,9 @@ unsigned int Node<T>::getHeight() const {
 
 template <typename T>
 void Node<T>::merge(std::shared_ptr<Node<T>> &that) {
-    _kids.push_back(that);
+    _kids.insert(_kids.begin(), that);
     _height++;
-    that->setParent(std::shared_ptr<Node<T>>(this));
+    that->setParent(this);
 }
 
 
@@ -78,13 +78,14 @@ public:
     explicit BinHeap(const std::vector<std::shared_ptr<Node<T>>> &roots);
     [[nodiscard]] unsigned int getSize() const;
     [[nodiscard]] T min();
-    std::shared_ptr <Node<T>> extractMin();
+    T extractMin();
     void insert(T data);
     void merge(BinHeap<T> &that);
+
 private:
-    std::vector <std::shared_ptr<Node <T>>> _roots;
+    std::vector <std::shared_ptr<Node <T>>> _roots;//from large to small
     unsigned int _size;
-    [[nodiscard]] std::shared_ptr<Node<T>> _nodeMin();
+    [[nodiscard]] auto _iteratorMin();
 };
 
 template<typename T>
@@ -99,16 +100,16 @@ BinHeap<T>::BinHeap(const std::vector<std::shared_ptr<Node<T>>> &roots):_roots(r
 }
 
 template<typename T>
-std::shared_ptr<Node<T>> BinHeap<T>::_nodeMin() {
-    if (_roots.size()){
-        std::shared_ptr<Node<T>> min = _roots[0];
-        for (auto it: _roots){
-            if (it->getData() < min->getData()){
-                min = it;
-            }
+auto BinHeap<T>::_iteratorMin(){
+    auto min = _roots.begin();
+    auto it = _roots.begin();
+    while(it != _roots.end()){
+        if ((*it)->getData() < (*min)->getData()){
+            min = it;
         }
-        return min;
+        it++;
     }
+    return min;
 }
 
 template<typename T>
@@ -118,35 +119,36 @@ unsigned int BinHeap<T>::getSize() const {
 
 template<typename T>
 T BinHeap<T>::min() {
-    return _nodeMin()->getData();
+    return (*_iteratorMin())->getData();
 }
 
 template<typename T>
 void BinHeap<T>::merge(BinHeap<T> &that){
     _size += that.getSize();
     std::list<std::shared_ptr<Node<T>>> tmp_container;
-    unsigned int first_item = 0, second_item = 0;
-    while(first_item < _roots.size() && second_item < that._roots.size()){
+    int first_item = _roots.size() - 1, second_item = that._roots.size() - 1;
+    while(first_item >= 0 && second_item >= 0){
         if (_roots[first_item]->getHeight() < that._roots[second_item]->getHeight()){
             tmp_container.push_back(_roots[first_item]);
-            first_item++;
+            first_item--;
         }
         else{
             tmp_container.push_back(that._roots[second_item]);
-            second_item++;
+            second_item--;
         }
     }
-    while(first_item < _roots.size()){
+    while(first_item >= 0){
         tmp_container.push_back(_roots[first_item]);
-        first_item++;
+        first_item--;
     }
-    while(second_item < that._roots.size()){
+    while(second_item >= 0){
         tmp_container.push_back(that._roots[second_item]);
-        second_item++;
+        second_item--;
     }
+
     for (auto it = tmp_container.begin(), it_next = ++tmp_container.begin(); it_next != tmp_container.end(); ) {
         if ((*it)->getHeight() == (*it_next)->getHeight()) {
-            if ((*it_next)->getData() > (*it)->getData){
+            if ((*it_next)->getData() > (*it)->getData()){
                 std::swap(*it_next, *it);
             }
             (*it_next)->merge(*it);
@@ -158,8 +160,9 @@ void BinHeap<T>::merge(BinHeap<T> &that){
     }
     _roots.clear();
     for (auto it: tmp_container){
-        _roots.push_back(*it);
+        _roots.push_back(it);
     }
+    std::reverse(_roots.begin(), _roots.end());
 }
 
 template<typename T>
@@ -169,11 +172,12 @@ void BinHeap<T>::insert(T data) {
 }
 
 template<typename T>
-std::shared_ptr<Node<T>> BinHeap<T>::extractMin() {
-    Node minimal = _nodeMin();
+T BinHeap<T>::extractMin() {
+    auto minimal = _iteratorMin();
+    BinHeap<T> that = BinHeap<T>((*minimal)->getKids());
     _roots.erase(minimal);
-    merge(BinHeap<T>(minimal._kids));
-    return minimal;
+    merge(that);
+    return (*minimal)->getData();
 }
 
 
