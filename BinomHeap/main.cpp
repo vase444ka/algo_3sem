@@ -2,16 +2,16 @@
 #include "BinHeap.h"
 
 void f(){
-    BinHeap<int> govno;
-    govno.insert(1);
-    govno.insert(0);
-    govno.insert(3);
-    govno.insert(2);
-    govno.insert(5);
-    govno.extractMin();
-    govno.extractMin();
-    govno.insert(0);
-    std::cout<<govno.min()<<std::endl;
+    BinHeap<int> test_heap;
+    test_heap.insert(1);
+    test_heap.insert(0);
+    test_heap.insert(3);
+    test_heap.insert(2);
+    test_heap.insert(5);
+    test_heap.extractMin();
+    test_heap.extractMin();
+    test_heap.insert(0);
+    std::cout << test_heap.min() << std::endl;
 }
 
 int main() {

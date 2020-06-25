@@ -19,13 +19,14 @@ public:
     [[nodiscard]] unsigned int getSize();
     ~FibNode();
 
+    //returns modified to
     friend FibNode <T>* merge(FibNode <T>* to, FibNode <T>* from);
 
 private:
     T _data;
     FibNode *_parent_p, *_child_p, *_left_p, *_right_p;
     unsigned int _size;
-    bool _subtree_deletions;
+    bool _subtree_deletions, _is_deleted;
 };
 
 template <typename T>

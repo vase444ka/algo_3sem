@@ -5,6 +5,7 @@ FibNode<T>::FibNode() {
     _left_p = _right_p = this;
     _size = 0;
     _subtree_deletions = false;
+    _is_deleted = false;
 }
 
 template<typename T>
@@ -13,11 +14,12 @@ FibNode<T>::FibNode(T data) {
     _data = data;
 }
 
-template<typename T>//todo recursive
+template<typename T>
 FibNode<T>::~FibNode() {
-    if(_left_p)
-        delete _left_p;
-    if (_right_p)
+    if (_child_p)
+        delete _child_p;
+    _is_deleted = true;
+    if (!(_right_p->_is_deleted))
         delete _right_p;
 }
 
@@ -31,13 +33,20 @@ T FibNode<T>::getData() {
     return _data;
 }
 
-template <typename T>//todo
+template <typename T>
 FibNode<T>* merge(FibNode<T>* to, FibNode<T>* from) {
-    to->_right_p->_left_p = ;
-    to->_right_p = from;
+    FibNode<T> *to_left_link = to,
+                *to_right_link = to->_right_p,
+                *from_left_link = from,
+                *from_right_link = from->_left_p;
 
-    from->_left_p->_right_p = to->_right_p;
-    from->_left_p = to;
+    to_left_link->_right_p = from_left_link;
+    from_left_link->_left_p = to_left_link;
+
+    to_right_link->_left_p = from_right_link;
+    from_right_link->_right_p = to_right_link;
+
+    return to;
 }
 
 
@@ -66,7 +75,14 @@ void FibHeap<T>::_clear() {
 
 template<typename T>//todo
 FibNode<T> *FibHeap<T>::extractMin() {
+    FibNode <T>* res = _min_p;
+    if (res){
+        _size--;
 
+
+
+    }
+    return res;
 }
 
 template<typename T>
