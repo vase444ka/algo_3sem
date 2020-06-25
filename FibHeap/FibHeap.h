@@ -18,7 +18,8 @@ public:
     [[nodiscard]] T getData();
     [[nodiscard]] unsigned int getSize();
     [[nodiscard]] FibNode<T>* getChild() const;
-    void resetParent();
+    bool resetParent();//true if parent was chaged
+    bool resetChild();//true if child was chaged
     void listRemove();//should have at least 1 sibiling
     ~FibNode() = default;
 
@@ -58,8 +59,7 @@ public:
 
 private:
     FibNode <T> *_min_p;
-    unsigned int _size;
-    void _clear();
+    unsigned int _size, _max_root_size;
     void _consolidate();
 };
 

@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Splay.hpp"
-#include "SplayTree.hpp"
 
-namespace lab::detail {
+namespace detail {
 
     template <typename T>
     struct Node {

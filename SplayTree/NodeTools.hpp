@@ -2,7 +2,7 @@
 
 #include "SplayTree.hpp"
 
-namespace lab::detail {
+namespace detail {
 
     template <typename T>
     auto find (Node<T>* node, const T& elem) noexcept -> Node<T>*

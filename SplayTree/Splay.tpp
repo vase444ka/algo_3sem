@@ -2,7 +2,7 @@
 
 #include "SplayTreeNode.hpp"
 
-namespace lab::detail {
+namespace detail {
 
     template <typename T>
     Splayer<T>::Splayer (Node<T>*node)

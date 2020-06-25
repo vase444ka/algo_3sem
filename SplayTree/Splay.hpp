@@ -4,7 +4,7 @@
 #include <utility>
 #include <cassert>
 
-namespace lab::detail {
+namespace detail {
 
     template <typename T>
     struct Node;
