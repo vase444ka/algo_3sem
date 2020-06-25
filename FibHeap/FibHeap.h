@@ -19,12 +19,13 @@ public:
     [[nodiscard]] unsigned int getSize();
     [[nodiscard]] FibNode<T>* getChild() const;
     void resetParent();
+    void listRemove();//should have at least 1 sibiling
     ~FibNode();
 
     friend  FibNode<T>* operator++(FibNode<T>*);
 
     //returns modified to
-    friend FibNode <T>* merge(FibNode <T>* to, FibNode <T>* from);
+    friend FibNode <T>* link(FibNode <T>* to, FibNode <T>* from);
 
 private:
     T _data;
@@ -45,12 +46,13 @@ public:
     FibNode<T> *extractMin();
     ~FibHeap();
 
-    friend FibHeap<T> merge(FibHeap<T> a, FibHeap<T> b);
+    friend FibHeap<T> merge(const FibHeap<T> &a, const FibHeap<T> &b);
 
 private:
     FibNode <T> *_min_p;
     unsigned int _size;
     void _clear();
+    void _consolidate();
 };
 
 #include "FibHeap.tpp"

@@ -1,0 +1,10 @@
+**.txt
+**.bin
+**.cbp
+**.depend
+**.layout
+**/obj
+**/bin
+**/.idea
+**/cmake-build-debug
+**/cmake-build-release
