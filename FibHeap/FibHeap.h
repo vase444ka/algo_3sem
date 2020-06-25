@@ -5,6 +5,8 @@
 #ifndef FIBHEAP_FIBHEAP_H
 #define FIBHEAP_FIBHEAP_H
 
+#include <vector>
+
 template <typename T>
 class FibNode;
 template <typename T>
@@ -21,6 +23,8 @@ public:
     bool resetParent();//true if parent was chaged
     bool resetChild();//true if child was chaged
     void listRemove();//should have at least 1 sibiling
+    void addSizeOf(FibNode<T>* another);
+    void isolate();
     ~FibNode() = default;
 
     template<typename t>

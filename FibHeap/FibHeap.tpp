@@ -86,6 +86,18 @@ bool FibNode<T>::resetChild() {
     _child_p = nullptr;
     return true;}
 
+template<typename T>
+void FibNode<T>::addSizeOf(FibNode<T>* another) {
+    if (another){
+        _size += another->_size;
+    }
+}
+
+template<typename T>
+void FibNode<T>::isolate() {
+    _left_p = _right_p = this;
+}
+
 
 template<typename T>
 FibHeap<T>::FibHeap():_min_p(nullptr), _size(0), _max_root_size(0) {}
@@ -170,9 +182,31 @@ void FibHeap<T>::_consolidate() {
     for (int i = 0; i <= degree; i++)
         A[i] = nullptr;
 
+    std::vector <FibNode<T>*> tmp_roots;
+    auto iterator = _min_p;
+    if (iterator){
+        tmp_roots.push_back(iterator);
+        iterator = iterate(iterator);
+    }
+    while(iterator != nullptr && iterator != _min_p){
+        tmp_roots.push_back(iterator);
+        iterator = iterate(iterator);
+    }
 
-
-
+    for (auto it: tmp_roots){
+        it->isolate();
+        while (A[it->getSize()] != nullptr){
+            FibNode<T>* coliding = A[it->getSize()];
+            A[it->getSize()] = nullptr;
+            if (it->getData() > coliding->getData()){
+                std::swap(*it, *coliding);
+            }
+            FibNode<T>* kid = it->getChild();
+            kid = link(kid, coliding);
+            it->addSizeOf(coliding);
+        }
+        A[it->getSize()] = it;
+    }
 
     _min_p = nullptr;
     for (int i = 0; i <= degree; i++){
