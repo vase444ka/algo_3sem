@@ -1,3 +1,6 @@
+
+#include "FibHeap.h"
+
 template<typename T>
 FibNode<T>::FibNode() {
     _parent_p = nullptr;
@@ -33,6 +36,11 @@ T FibNode<T>::getData() {
     return _data;
 }
 
+template<typename T>
+FibNode<T> *FibNode<T>::getChild() const {
+    return _child_p;
+}
+
 template <typename T>
 FibNode<T>* merge(FibNode<T>* to, FibNode<T>* from) {
     FibNode<T> *to_left_link = to,
@@ -49,12 +57,29 @@ FibNode<T>* merge(FibNode<T>* to, FibNode<T>* from) {
     return to;
 }
 
+template <typename T>
+FibNode<T> *operator++(FibNode<T>* operand) {
+    if(operand){
+        operand = operand->_right_p;
+        return operand;
+    }
+    return nullptr;
+}
+
+template<typename T>
+void FibNode<T>::resetParent() {
+    _parent_p = nullptr;
+}
+
 
 template<typename T>
 FibHeap<T>::FibHeap():_min_p(nullptr), _size(0) {}
 
 template<typename T>
 FibHeap<T>::FibHeap(T data): _min_p(data), _size(0) {}
+
+template<typename T>
+FibHeap<T>::FibHeap(FibNode<T> *single) : _min_p(single), _size(single->getSize() + 1){}
 
 template<typename T>
 T FibHeap<T>::min() {
@@ -78,6 +103,17 @@ FibNode<T> *FibHeap<T>::extractMin() {
     FibNode <T>* res = _min_p;
     if (res){
         _size--;
+        FibNode<T>* iterator = _min_p->getChild();
+        if (iterator){
+            iterator->resetParent();
+            (*this) = merge((*this), FibNode<T>(iterator));
+            iterator++;
+        }
+        while(iterator != _min_p->getChild()){
+            iterator->resetParent();
+            (*this) = merge((*this), FibNode<T>(iterator));
+            iterator++;
+        }
 
 
 
@@ -111,4 +147,5 @@ FibHeap<T> merge(FibHeap<T> a, FibHeap<T> b) {
     b._clear();
     return res;
 }
+
 

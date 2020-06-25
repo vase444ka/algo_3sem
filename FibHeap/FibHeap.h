@@ -17,7 +17,11 @@ public:
     explicit FibNode(T data);
     [[nodiscard]] T getData();
     [[nodiscard]] unsigned int getSize();
+    [[nodiscard]] FibNode<T>* getChild() const;
+    void resetParent();
     ~FibNode();
+
+    friend  FibNode<T>* operator++(FibNode<T>*);
 
     //returns modified to
     friend FibNode <T>* merge(FibNode <T>* to, FibNode <T>* from);
@@ -34,6 +38,7 @@ class FibHeap{
 public:
     FibHeap();
     explicit FibHeap(T data);
+    explicit FibHeap(FibNode<T>* single_node);
     [[nodiscard]] unsigned int getSize();
     void insert(T data);
     T min();
