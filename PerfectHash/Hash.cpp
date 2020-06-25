@@ -11,7 +11,6 @@ int rand_int(int min, int max) {
 
 void HashNode::fill(int p) {
     _mod = (int) (_tmp.size() * _tmp.size());
-    std::cout << "MJ: " << _tmp.size() << std::endl << std::endl;
 
     if (_mod == 1) {
         _elements = _tmp;
@@ -42,7 +41,9 @@ void HashNode::fill(int p) {
 
 Student *HashNode::getStudent(const std::string &str, int p) {
     Student temp = Student(str, 1);
-    return _elements[temp.hash(_a, _b, _mod, p)];
+    if (!_elements.empty())
+        return _elements[temp.hash(_a, _b, _mod, p)];
+    return nullptr;
 }
 
 void HashNode::insertToTmp(Student* ins) {
@@ -50,7 +51,7 @@ void HashNode::insertToTmp(Student* ins) {
 }
 
 
-HashTable::HashTable(const std::vector<Student *> &elements) {
+HashTable::HashTable(std::vector<Student *> elements) {
     _prime = 2153;
     _modulo = 50;
     _data = std::vector<HashNode>(_modulo);
