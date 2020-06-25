@@ -20,18 +20,23 @@ public:
     [[nodiscard]] FibNode<T>* getChild() const;
     void resetParent();
     void listRemove();//should have at least 1 sibiling
-    ~FibNode();
+    ~FibNode() = default;
 
-    friend  FibNode<T>* operator++(FibNode<T>*);
+    template<typename t>
+    friend FibNode<t>* iterate(FibNode<t>*a);
 
+    void tmpAll(){
+        std::cout<<_data<<' '<<_parent_p<<' '<<_child_p<<' '<<_left_p<<' '<<_right_p<<std::endl;
+    }
     //returns modified to
-    friend FibNode <T>* link(FibNode <T>* to, FibNode <T>* from);
+    template <typename t>
+    friend FibNode <t>* link(FibNode <t>* to, FibNode <t>* from);
 
 private:
     T _data;
     FibNode *_parent_p, *_child_p, *_left_p, *_right_p;
     unsigned int _size;
-    bool _subtree_deletions, _is_deleted;
+    bool _subtree_deletions;
 };
 
 template <typename T>
@@ -44,9 +49,12 @@ public:
     void insert(T data);
     T min();
     FibNode<T> *extractMin();
-    ~FibHeap();
+    ~FibHeap() = default;
 
-    friend FibHeap<T> merge(const FibHeap<T> &a, const FibHeap<T> &b);
+    FibNode<T> *tmpMin(){return _min_p;}
+
+    template<typename t>
+    friend FibHeap<t> merge(FibHeap<t> a, FibHeap<t> b);
 
 private:
     FibNode <T> *_min_p;
